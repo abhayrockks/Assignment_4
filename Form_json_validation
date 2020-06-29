@@ -23,7 +23,13 @@
         th {
             font-weight: bold;
         }
+
+        span {
+            display: none;
+            color: red;
+        }
     </style>
+
 </head>
 
 <body>
@@ -34,19 +40,20 @@
         <div class="form-group">
             <label>Name:</label>
             <input id="Name" name="Name" class="form-control" type="text">
-            <span id="error_name"></span>
+            <span>* Required</span>
         </div><br>
 
         <div class="form-group">
             <label>Dob:</label>
             <input id="Dob" name="Dob" class="form-control" type="date">
-            <span id="error_dob"></span>
+            <span>* Required</span>
         </div><br>
 
         <div class="form-group">
             <label>Game:</label>
             <input id="Game" name="Game" class="form-control" type="text">
-            <span id="error_game"></span>
+            <span id="error_game1">* Required</span>
+            <span id="error_game2"></span>
         </div><br>
 
 
@@ -96,13 +103,16 @@
 
     tableFromJson();
 
-    $("#btn").click(function (evt) {
-        evt.preventDefault();
-        validate();
-        if (validate()) {
-            datatojson();
+    $("input").focusout(function () {
+        if ($(this).val() == '') {
+            $(this).css('border', 'solid 2px red');
         }
-    });
+        else {
+
+            // If it is not blank. 
+            $(this).css('border', 'solid 2px green');
+        }
+    }).trigger("focusout");
 
     function sort() {
         var array = [];
@@ -133,37 +143,45 @@
 
         for (var i = 0; i < details.length; i++) {
             if (object.Name == details[i].Name && object.Dob == details[i].Dob && object.Game == details[i].Game) {
-                (document.getElementById("error_game").innerHTML = 'Already a member of this game');
+                document.getElementById("error_game2").innerHTML = 'Already a member of this game';
                 return;
             }
         }
-        details.push(object),
-            document.getElementById("myform").reset(),
-            tableFromJson()
-
+        details.push(object);
+        document.getElementById("myform").reset();
+        tableFromJson()
     }
 
-    function validate() {
+    $("#btn").click(function (evt) {
+        evt.preventDefault();
+
         var name = $("#Name").val();
         var dob = $("#Dob").val();
         var game = $("#Game").val();
 
         if (name == null || name == "") {
-            document.getElementById("error_name").style.color = 'red';
-            document.getElementById("error_name").innerHTML = '* Required';
-            return false;
+            $("input").focus(function () {
+                $(this).next("span").css("display", "inline").fadeOut(1000);
+            });
+            return;
+
         }
         else if (dob == null || dob == "") {
-            document.getElementById("error_dob").style.color = 'red';
-            document.getElementById("error_dob").innerHTML = '* Required';
-            return false;
+            $("input").focus(function () {
+                $(this).next("span").css("display", "inline").fadeOut(1000);
+            });
+            return;
+
         }
         else if (game == null || game == "") {
-            document.getElementById("error_game").style.color = 'red';
-            document.getElementById("error_game").innerHTML = '* Required';
-            return false;
+            $("input").focus(function () {
+                $(this).next("span").css("display", "inline").fadeOut(1000);
+            });
+            return;
         }
-    }
+        datatojson();
+    });
+
 
     function tableFromJson() {
 
@@ -186,5 +204,6 @@
         document.getElementById('showdata').innerHTML = table;
     }
 </script>
+
 
 </html>
