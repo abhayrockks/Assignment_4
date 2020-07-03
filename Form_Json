@@ -1,0 +1,163 @@
+<html>
+
+<head>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <style>
+        th,
+        td,
+        p,
+        input,
+        h3 {
+            font: 15px 'Segoe UI';
+        }
+
+        table,
+        th,
+        td {
+            border: solid 1px #ddd;
+            border-collapse: collapse;
+            padding: 2px 3px;
+            text-align: center;
+        }
+
+        th {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <h2>Form</h2>
+    <form id="myform" class="myform">
+        <div class="form-group">
+            <label>Name:</label>
+            <input name="Name" class="form-control" type="text">
+        </div><br>
+
+        <div class="form-group">
+            <label>Dob:</label>
+            <input name="Dob" class="form-control" type="date">
+        </div><br>
+
+        <div class="form-group">
+            <label>Game:</label>
+            <input name="Game" class="form-control" type="text">
+            <span id="error_game"></span>
+        </div>
+    </form>
+
+    <div>
+        <input type="submit" id="btn" name="btn" class="btn" value="Submit" />
+    </div><br>
+
+    <div id="showdata">
+    </div><br>
+
+    <div>
+        <label>Select sorting conditions:</label><br>
+        <select class="form-control" id="sort">
+            <option>Name</option>
+            <option>Dob</option>
+            <option>Game</option>
+        </select>
+
+        <select class="form-control" id="order">
+            <option>Ascending</option>
+            <option>Descending</option>
+        </select>
+
+        <input type='button' onclick='sort()' value='Sort' />
+    </div>
+
+
+
+</body>
+
+<script>
+
+    var details = [{
+        "Name": "Divyansh",
+        "Dob": "1884-04-23",
+        "Game": "Chess"
+    },
+    {
+        "Name": "Zuben",
+        "Dob": "1995-04-30",
+        "Game": "Archery"
+    },
+    {
+        "Name": "Saurabh",
+        "Dob": "1992-09-02",
+        "Game": "Volleyball"
+    }];
+
+    tableFromJson();
+
+    function sort() {
+        var array = [];
+        array = details;
+        var key = $("#sort").val();
+        var order = $("#order").val();
+
+        if (order == "Ascending") {
+            array.sort(function (a, b) {
+                var x = a[key]; var y = b[key];
+                return ((x.toLowerCase() < y.toLowerCase()) ? -1 : ((x.toLowerCase() > y.toLowerCase()) ? 1 : 0));
+            });
+
+        }
+        else {
+            array.sort(function (a, b) {
+                var x = a[key]; var y = b[key];
+                return ((x.toLowerCase() > y.toLowerCase()) ? -1 : ((x.toLowerCase() < y.toLowerCase()) ? 1 : 0));
+            });
+        }
+
+        tableFromJson();
+    }
+
+    $("#btn").click(function (evt) {
+        evt.preventDefault();
+        var formData = $("#myform").serializeArray();
+        var object = {};
+        formData.forEach(function (value) {
+            object[value.name] = value.value;
+        })
+
+        for (var i = 0; i < details.length; i++) {
+            if (object.Name == details[i].Name && object.Dob == details[i].Dob && object.Game == details[i].Game) {
+                (document.getElementById("error_game").innerHTML = 'Already a member of this game');
+                return;
+            }
+        }
+            details.push(object),
+            document.getElementById("myform").reset(),
+            tableFromJson()
+
+    });
+
+    function tableFromJson() {
+
+        var objlength = details.length;
+        var table = '<table>' +
+            '<tr>' +
+            '<th>Name</th>' +
+            '<th>Dob</th>' +
+            '<th>Game</th>' +
+            '</tr>';
+
+        for (var i = 0; i < objlength; i++) {
+            table += '<tr>' +
+                '<td>' + details[i].Name + '</td>' +
+                '<td>' + details[i].Dob + '</tD>' +
+                '<td>' + details[i].Game + '</th>' +
+                '</tr>'
+        }
+        table += '</table>';
+        document.getElementById('showdata').innerHTML = table;
+    }
+</script>
+
+</html>
